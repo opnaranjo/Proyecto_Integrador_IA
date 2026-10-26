@@ -4,7 +4,7 @@
 ![scikit-learn](https://img.shields.io/badge/scikit--learn-1.9-F7931E?logo=scikitlearn&logoColor=white)
 ![XGBoost](https://img.shields.io/badge/XGBoost-3.4-1f6feb)
 ![Streamlit](https://img.shields.io/badge/Streamlit-1.66-FF4B4B?logo=streamlit&logoColor=white)
-![Tests](https://img.shields.io/badge/tests-32%20passed-2ea44f)
+![Tests](https://img.shields.io/badge/tests-34%20passed-2ea44f)
 ![Code style](https://img.shields.io/badge/code%20style-ruff-261230)
 ![License](https://img.shields.io/badge/license-MIT-lightgrey)
 
@@ -125,7 +125,10 @@ Conjunto de prueba (4 326 registros nunca usados durante el desarrollo):
 
 * el error es estable en el rango 0 a 0.8 (MAE ≈ 0.045);
 * aumenta en los *Burn Rate* extremos (MAE 0.067) y casi se duplica cuando falta la fatiga mental (RMSE 0.098);
-* los intervalos del 90 % cubren el 91 % de los casos reales.
+* los intervalos del 90 % cubren el 91 % de los casos reales;
+* personas con las mismas entradas visibles pero sin dato de fatiga pueden tener *Burn Rate* reales de 0.16 a 0.64, y el modelo no puede distinguirlas (ver [casos de falla](docs/optimizacion.md#8-casos-donde-el-modelo-falla)).
+
+**Sin sobreajuste:** el RMSE es 0.0577 en entrenamiento, 0.0593 en validación cruzada y 0.0582 en prueba, y la curva de aprendizaje converge ([detalle](docs/optimizacion.md#7-sobreajuste-y-capacidad-de-generalización)).
 
 ## 5. Instalación y uso
 
@@ -218,7 +221,7 @@ Proyecto_Integrador_IA/
 ├── src/                    Código fuente modular (procesamiento, modelo, optimización, entrenamiento, evaluación)
 ├── models/                 best_model.pkl, model_v1.pkl, best_params.json y README
 ├── app/                    app.py (Streamlit), helpers.py, requirements.txt y assets/
-├── tests/                  Pruebas unitarias de datos, modelo y aplicación (32 pruebas)
+├── tests/                  Pruebas unitarias de datos, modelo y aplicación (34 pruebas)
 ├── results/                figures/ (gráficos), metrics/ (CSV y JSON), reports/
 └── deploy/huggingface/     Configuración del Space de Hugging Face
 ```

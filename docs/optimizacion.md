@@ -149,3 +149,38 @@ Se aplicaron al modelo final perturbaciones controladas sobre el conjunto de pru
 * Es **sensible a la calidad de la medición de la fatiga**: un ruido pequeño (10 % de su desviación estándar) ya cruza el criterio. El sistema depende de un instrumento de fatiga confiable y aplicado de forma consistente.
 * Cuando la prevalencia real es baja, casi la mitad de las alertas serían falsas. Esto respalda que la alerta solo invite a una conversación voluntaria de bienestar.
 * Plan de monitoreo: vigilar la tasa de datos faltantes de fatiga (alerta si supera el 10 %) y la distribución de la fatiga y del *Burn Rate* predicho. Revalidar el modelo si cambian de forma significativa.
+
+## 7. Sobreajuste y capacidad de generalización
+
+Se usaron cuatro evidencias complementarias:
+
+| Conjunto | RMSE | R² |
+|---|---|---|
+| Entrenamiento (datos con los que se ajustó) | 0.0577 | 0.915 |
+| Validación cruzada de 5 pliegues (desv. est. 0.0003) | 0.0593 | 0.910 |
+| Prueba (4 326 registros nunca vistos) | 0.0582 | 0.914 |
+
+1. **Brecha mínima entre conjuntos.** El error de entrenamiento es solo un 3 % menor que el de validación. Un modelo que memoriza mostraría un error de entrenamiento mucho más bajo.
+2. **Estabilidad entre pliegues.** La desviación estándar del RMSE entre los 5 pliegues es 0.0003: el resultado no depende de qué registros caen en cada partición.
+3. **Curva de aprendizaje.** Con 1 384 registros la brecha entre entrenamiento y validación es 0.0127; con 13 840 se reduce a 0.0018 y ambas curvas convergen cerca de 0.058. Más datos del mismo tipo apenas mejorarían el modelo: el límite está en la información de las variables, no en la cantidad de registros.
+4. **Prueba única al final.** El conjunto de prueba se reservó desde el inicio y se usó una sola vez, después de fijar hiperparámetros y corte. Su error coincide con el de validación cruzada.
+
+![Curva de aprendizaje](../results/figures/learning_curve.png)
+
+Además, las pruebas de estrés (sección 6) y el experimento de cambio de población (entrenar con empresas de servicios y evaluar con empresas de producto, R² 0.910) indican que el modelo generaliza a datos con la misma estructura. Lo que **no** se puede afirmar es que generalice a otras organizaciones o épocas: el dataset es de una sola fuente de 2008.
+
+## 8. Casos donde el modelo falla
+
+El archivo `results/metrics/failure_cases.csv` lista los 10 mayores errores del conjunto de prueba y las alertas no emitidas con datos completos.
+
+**Falla tipo 1: falta la fatiga mental.** Los 10 mayores errores corresponden a personas sin dato de fatiga. El caso más claro son 44 personas del conjunto de prueba con el mismo perfil visible (nivel 2, carga 4, sin dato de fatiga). Sus *Burn Rate* reales van de 0.16 a 0.64, pero el modelo, que recibe exactamente las mismas entradas, les asigna a todas alrededor de 0.43. No es un defecto corregible con más ajuste: la información que distingue a esas personas no está en las entradas. Por eso la aplicación muestra un aviso y un intervalo casi el doble de ancho cuando falta la fatiga.
+
+![Mismas entradas, realidades distintas](../results/figures/failure_ambiguous_profile.png)
+
+**Falla tipo 2: casos justo por encima del umbral.** Una persona de nivel 2, carga 5, fatiga 7.3, empresa de servicios y con teletrabajo tiene un *Burn Rate* real de 0.69. El modelo predice 0.575, por debajo del corte de 0.58, y no emite la alerta. El modelo tiende a contraer los valores altos hacia el centro, y en el nivel 2 los casos de riesgo alto son escasos (14 %) y quedan cerca del límite; por eso es el nivel con menor sensibilidad (0.70). El intervalo (0.49 a 0.66) tampoco alcanza el valor real.
+
+**Cómo se mitiga:**
+
+* el corte calibrado (0.58 en lugar de 0.60) reduce este tipo de omisión;
+* la probabilidad de riesgo alto y el intervalo se muestran junto a la predicción;
+* la alerta es solo una invitación a conversar, de modo que un caso no detectado puede identificarse por otras vías (conversaciones de bienestar, encuestas).

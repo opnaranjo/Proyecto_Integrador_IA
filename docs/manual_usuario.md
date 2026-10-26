@@ -120,7 +120,7 @@ En pantallas pequeñas las columnas se apilan y la barra lateral se oculta (bot�
 
 ![Mensaje de error de validación](img/06_error_csv.png)
 
-1. Ejemplo de error controlado: el archivo tenía un valor de fatiga de 12, un texto en la carga y un tipo de empresa inválido. La aplicación explica cada problema en lugar de fallar.
+1. Ejemplo de error controlado: el archivo tenía un valor de fatiga de 12, un texto en la carga y un tipo de empresa inválido. La aplicación explica cada problema en lugar de fallar. El repositorio incluye este archivo de prueba en `app/assets/ejemplo_invalido.csv` para reproducir el caso.
 
 ## 6. Preguntas frecuentes
 
