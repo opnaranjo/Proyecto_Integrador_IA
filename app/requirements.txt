@@ -1,0 +1,9 @@
+# Dependencias mínimas para ejecutar la aplicación (Streamlit Community Cloud las toma de esta carpeta).
+numpy==2.5.3
+pandas==3.0.5
+scikit-learn==1.9.1
+xgboost==3.4.1
+joblib==1.6.0
+pyyaml==6.0.3
+streamlit==1.66.1
+plotly==7.1.0

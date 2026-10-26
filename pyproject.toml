@@ -1,0 +1,10 @@
+[tool.ruff]
+line-length = 110
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I"]
+ignore = ["E402", "E501"]  # E501: textos largos de la interfaz; el formateador controla el código
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
