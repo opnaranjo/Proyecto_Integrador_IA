@@ -87,3 +87,16 @@ def test_alert_uses_calibrated_cutoff(trained_predictor):
     model, X_test, _ = trained_predictor
     res = model.predict_interval(X_test)
     assert (res["alert"] == (res["pred"] >= model.alert_cutoff)).all()
+
+
+def test_overfitting_check_and_failure_cases(trained_predictor, synthetic_df):
+    """La tabla de sobreajuste tiene los tres conjuntos y los casos de falla incluyen el error real."""
+    from src.data_processing import clean_data, split_data
+    from src.evaluate import failure_cases, overfitting_check
+
+    model, X_test, y_test = trained_predictor
+    X_train, _, y_train, _ = split_data(clean_data(synthetic_df), 0.2, 42)
+    table = overfitting_check(model, X_train, y_train, X_test, y_test, folds=3)
+    assert len(table) == 3 and (table["rmse"] > 0).all()
+    cases = failure_cases(model, X_test, y_test, n=4)
+    assert {"real", "pred", "error", "tipo"} <= set(cases.columns)

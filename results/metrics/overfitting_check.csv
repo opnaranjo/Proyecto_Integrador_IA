@@ -1,0 +1,4 @@
+conjunto,rmse,r2,desv_rmse
+Entrenamiento (ajuste),0.0577,0.9153,
+Validación cruzada (5 pliegues),0.0593,0.9104,0.0003
+Prueba (datos nuevos),0.0582,0.914,

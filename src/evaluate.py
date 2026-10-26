@@ -414,6 +414,131 @@ def plot_group_metrics(table: pd.DataFrame, title: str, path) -> None:
     plt.close(fig)
 
 
+# ---------------------------------------------------- sobreajuste y fallas
+def overfitting_check(
+    predictor,
+    X_train: pd.DataFrame,
+    y_train: pd.Series,
+    X_test: pd.DataFrame,
+    y_test: pd.Series,
+    folds: int = 5,
+    seed: int = 42,
+) -> pd.DataFrame:
+    """Compara el error en entrenamiento, validación cruzada y prueba.
+
+    Si el modelo memorizara los datos, el error de entrenamiento sería mucho menor
+    que el de validación y el de prueba.
+    """
+    from sklearn.base import clone
+    from sklearn.model_selection import KFold, cross_validate
+
+    pipe = predictor.pipeline
+    cv = cross_validate(
+        clone(pipe),
+        X_train[FEATURES],
+        y_train,
+        cv=KFold(folds, shuffle=True, random_state=seed),
+        scoring=("neg_root_mean_squared_error", "r2"),
+    )
+    tr = regression_metrics(y_train, predictor.predict(X_train))
+    te = regression_metrics(y_test, predictor.predict(X_test))
+    return pd.DataFrame(
+        [
+            {"conjunto": "Entrenamiento (ajuste)", "rmse": tr["rmse"], "r2": tr["r2"], "desv_rmse": np.nan},
+            {
+                "conjunto": f"Validación cruzada ({folds} pliegues)",
+                "rmse": -cv["test_neg_root_mean_squared_error"].mean(),
+                "r2": cv["test_r2"].mean(),
+                "desv_rmse": cv["test_neg_root_mean_squared_error"].std(),
+            },
+            {"conjunto": "Prueba (datos nuevos)", "rmse": te["rmse"], "r2": te["r2"], "desv_rmse": np.nan},
+        ]
+    ).set_index("conjunto")
+
+
+def plot_learning_curve(
+    predictor, X_train: pd.DataFrame, y_train: pd.Series, path, folds: int = 5, seed: int = 42
+) -> pd.DataFrame:
+    """Curva de aprendizaje: RMSE de entrenamiento y validación según el tamaño de muestra."""
+    from sklearn.base import clone
+    from sklearn.model_selection import KFold, learning_curve
+
+    sizes, tr, va = learning_curve(
+        clone(predictor.pipeline),
+        X_train[FEATURES],
+        y_train,
+        train_sizes=np.linspace(0.1, 1.0, 6),
+        cv=KFold(folds, shuffle=True, random_state=seed),
+        scoring="neg_root_mean_squared_error",
+    )
+    tr, va = -tr, -va
+    fig, ax = plt.subplots(figsize=(7, 3.8))
+    ax.plot(sizes, tr.mean(1), "o-", color="#888", label="Entrenamiento")
+    ax.fill_between(sizes, tr.mean(1) - tr.std(1), tr.mean(1) + tr.std(1), color="#888", alpha=0.2)
+    ax.plot(sizes, va.mean(1), "s-", color="#111", label="Validación cruzada")
+    ax.fill_between(sizes, va.mean(1) - va.std(1), va.mean(1) + va.std(1), color="#111", alpha=0.15)
+    ax.set_xlabel("Registros de entrenamiento")
+    ax.set_ylabel("RMSE")
+    ax.set_title("Curva de aprendizaje del modelo final")
+    ax.legend(frameon=False)
+    fig.tight_layout()
+    fig.savefig(path, dpi=150)
+    plt.close(fig)
+    return pd.DataFrame(
+        {"n_train": sizes, "rmse_train": tr.mean(1), "rmse_cv": va.mean(1), "brecha": va.mean(1) - tr.mean(1)}
+    )
+
+
+def failure_cases(predictor, X_test: pd.DataFrame, y_test: pd.Series, n: int = 10) -> pd.DataFrame:
+    """Casos de prueba con mayor error absoluto y alertas no emitidas."""
+    res = predictor.predict_interval(X_test)
+    df = X_test[FEATURES].join(res[["pred", "lower", "upper", "alert", "fatigue_imputed"]])
+    df["real"] = np.asarray(y_test)
+    df["error"] = df["real"] - df["pred"]
+    df["fuera_del_intervalo"] = (df["real"] < df["lower"]) | (df["real"] > df["upper"])
+    worst = (
+        df.reindex(df["error"].abs().sort_values(ascending=False).index).head(n).assign(tipo="Mayor error")
+    )
+    complete = df[["Mental Fatigue Score", "Resource Allocation"]].notna().all(axis=1)
+    missed = df[(df["real"] >= predictor.threshold) & ~df["alert"] & complete]
+    missed = (
+        missed.sort_values("real", ascending=False)
+        .head(n // 2)
+        .assign(tipo="Alerta no emitida (dato completo)")
+    )
+    return pd.concat([worst, missed]).round(3)
+
+
+def plot_ambiguous_profile(
+    predictor, X_test: pd.DataFrame, y_test: pd.Series, path, profile: dict | None = None
+) -> dict:
+    """Muestra que personas con las mismas entradas visibles tienen Burn Rate reales muy distintos."""
+    profile = profile or {"Designation": 2.0, "Resource Allocation": 4.0}
+    mask = X_test["Mental Fatigue Score"].isna()
+    for k, v in profile.items():
+        mask &= X_test[k] == v
+    y = np.asarray(y_test)[mask.to_numpy()]
+    pred = predictor.predict(X_test[mask])
+    fig, ax = plt.subplots(figsize=(7, 3.4))
+    ax.hist(y, bins=15, color="#888", label=f"Burn Rate real ({len(y)} personas)")
+    ax.axvline(pred.mean(), color="#c0392b", lw=2, label=f"Predicción del modelo ≈ {pred.mean():.2f}")
+    ax.axvline(predictor.threshold, color="#111", ls="--", lw=1, label="Riesgo alto (0.6)")
+    ax.set_xlabel("Burn Rate")
+    ax.set_ylabel("Personas")
+    ax.set_title("Nivel 2, carga 4 y sin dato de fatiga: mismas entradas, realidades distintas", fontsize=10)
+    ax.legend(frameon=False, fontsize=8)
+    fig.tight_layout()
+    fig.savefig(path, dpi=150)
+    plt.close(fig)
+    return {
+        "n": int(len(y)),
+        "real_min": float(y.min()),
+        "real_max": float(y.max()),
+        "real_std": float(y.std()),
+        "pred_media": float(pred.mean()),
+    }
+
+
 # ------------------------------------------------------------ orquestación
 def run_evaluation(
     predictor,
@@ -542,7 +667,19 @@ def run_evaluation(
     )
     shift.round(4).to_csv(met / "distribution_shift.csv")
 
-    # 6. Figuras de diagnóstico
+    # 6. Sobreajuste y generalización
+    ovf = overfitting_check(predictor, X_train, y_train, X_test, y_test, cfg["model"]["cv_folds"], seed)
+    ovf.round(4).to_csv(met / "overfitting_check.csv")
+    lc = plot_learning_curve(
+        predictor, X_train, y_train, fig / "learning_curve.png", cfg["model"]["cv_folds"], seed
+    )
+    lc.round(4).to_csv(met / "learning_curve.csv", index=False)
+
+    # 7. Casos donde el modelo falla
+    failure_cases(predictor, X_test, y_test).to_csv(met / "failure_cases.csv")
+    ambiguous = plot_ambiguous_profile(predictor, X_test, y_test, fig / "failure_ambiguous_profile.png")
+
+    # 8. Figuras de diagnóstico
     plot_pred_vs_real(y_test, pred, fig / "pred_vs_real.png", thr)
     plot_residuals(y_test, pred, imputed.to_numpy(), fig / "residuals.png")
     imp = predictor.feature_importance()
@@ -557,6 +694,8 @@ def run_evaluation(
         "equidad": fairness,
         "cobertura_intervalos": cov.round(4).to_dict(orient="index"),
         "importancia_variables": imp.round(4).to_dict(),
+        "sobreajuste": ovf.round(4).to_dict(orient="index"),
+        "perfil_ambiguo": ambiguous,
         "n_train": int(len(X_train)),
         "n_test": int(len(X_test)),
     }

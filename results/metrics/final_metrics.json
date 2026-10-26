@@ -207,6 +207,30 @@
     "WFH Setup Available": 0.0055,
     "Company Type": 0.0012
   },
+  "sobreajuste": {
+    "Entrenamiento (ajuste)": {
+      "rmse": 0.0577,
+      "r2": 0.9153,
+      "desv_rmse": NaN
+    },
+    "Validación cruzada (5 pliegues)": {
+      "rmse": 0.0593,
+      "r2": 0.9104,
+      "desv_rmse": 0.0003
+    },
+    "Prueba (datos nuevos)": {
+      "rmse": 0.0582,
+      "r2": 0.914,
+      "desv_rmse": NaN
+    }
+  },
+  "perfil_ambiguo": {
+    "n": 44,
+    "real_min": 0.16,
+    "real_max": 0.64,
+    "real_std": 0.1259761472240737,
+    "pred_media": 0.42520567774772644
+  },
   "n_train": 17300,
   "n_test": 4326
 }

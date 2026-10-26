@@ -86,3 +86,10 @@ def test_load_predictor_retrains_when_model_file_is_unreadable(tmp_path, monkeyp
     assert origin == "reentrenado"
     assert 0 < model.alert_cutoff <= 0.6
     assert model.metadata["test_metrics"]["r2"] > 0.8
+
+
+def test_invalid_example_file_is_rejected_with_clear_message():
+    """El CSV inválido de demostración produce un error de validación legible."""
+    raw = pd.read_csv(ROOT / "app" / "assets" / "ejemplo_invalido.csv")
+    with pytest.raises(DataValidationError, match="Mental Fatigue Score"):
+        predict_batch(None, raw)

@@ -1,6 +1,6 @@
 # Reporte de evaluación del modelo final
 
-Generado automáticamente por `src/evaluate.py` el 2026-10-26 13:49.
+Generado automáticamente por `src/evaluate.py` el 2026-10-26 14:04.
 Conjunto de prueba: 4326 registros. Corte de alerta: 0.580.
 
 ## Métricas principales
