@@ -64,7 +64,7 @@ Metodología ágil adaptada a un proyecto individual (el autor asume los roles d
 | 1. Investigación y diseño | Dataset verificado, EDA inicial, arquitectura | Completado; presentación entregada el 20/09/2026 | Sin desvío. La retroalimentación docente añadió dos requisitos: comparar con un baseline de una variable y reconocer la ausencia de variable de área |
 | 2. Desarrollo base | Preprocesamiento, modelo base, clasificación de riesgo | Completado: ficha técnica, comparación de algoritmos y EDA | Se descartó imputar el objetivo (planteado al inicio) para no fabricar etiquetas |
 | 3. Optimización y validación | Ajuste de hiperparámetros, validación cruzada, dashboard | Diagnóstico de sobreajuste, auditoría de equidad (12/10/2026) y optimización con Optuna | El dashboard se rediseñó para mostrar solo agregados en la vista organizacional, a raíz de la auditoría ética |
-| 4. Finalización | Pruebas integrales, documentación, presentación | Repositorio final, pruebas automatizadas, despliegue y videos | Se añadió el despliegue en la nube como requisito obligatorio; la fecha límite efectiva fue el 28/10/2026 |
+| 4. Finalización | Pruebas integrales, documentación, presentación | Repositorio final, pruebas automatizadas, despliegue y videos | Se añadió el despliegue en la nube como requisito obligatorio; la fecha límite de entrega fue el 30/10/2026 |
 
 ## 6. Recursos
 
