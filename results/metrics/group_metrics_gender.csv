@@ -1,0 +1,3 @@
+grupo,rmse,mae,r2,n,tasa_alerta_real,tasa_alerta_predicha,sensibilidad,falsos_positivos
+Female,0.0576,0.0457,0.9103,2269,0.1807,0.212,0.8951,0.0613
+Male,0.059,0.0468,0.914,2057,0.3019,0.3228,0.8438,0.0975
