@@ -9,7 +9,7 @@
 
 ## Acceso
 
-* **En línea:** abra el enlace de la aplicación desplegada que figura en el README del repositorio. No requiere cuenta ni instalación.
+* **En línea:** abra [https://monitor-burnout-onaranjo.streamlit.app](https://monitor-burnout-onaranjo.streamlit.app). No requiere cuenta ni instalación.
 * **Local:** desde la raíz del repositorio ejecute `streamlit run app/app.py` y abra `http://localhost:8501`.
 
 La aplicación funciona en navegadores de escritorio y móviles. El tema claro u oscuro se cambia en el menú ⋮ (arriba a la derecha) → *Settings* → *Theme*.

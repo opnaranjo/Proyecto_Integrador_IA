@@ -10,7 +10,7 @@
 
 Sistema de aprendizaje automático que estima el índice de agotamiento laboral (*Burn Rate*) a partir de cinco variables de clima laboral y emite una alerta preventiva de riesgo alto, con intervalos de incertidumbre y explicaciones por variable. Se ofrece como aplicación web pública, diseñada para la prevención y el bienestar con resultados organizacionales solo agregados, nunca para evaluar personas.
 
-**Aplicación en línea:** URL_DE_LA_APP · **Repositorio:** https://github.com/opnaranjo/Proyecto_Integrador_IA
+**Aplicación en línea:** [https://monitor-burnout-onaranjo.streamlit.app](https://monitor-burnout-onaranjo.streamlit.app) · **Repositorio:** https://github.com/opnaranjo/Proyecto_Integrador_IA
 
 Proyecto Integrador · Maestría en Inteligencia Artificial · Universidad de Especialidades Espíritu Santo (UEES) · Autor: Oscar Paúl Naranjo Castro · Docente: Gladys María Villegas Rugel
 
@@ -267,4 +267,6 @@ A la docente Gladys María Villegas Rugel por la retroalimentación que orientó
 * **Video pitch (5 minutos):** URL_VIDEO_PITCH
 * **Video de respuestas a las preguntas:** URL_VIDEO_PREGUNTAS
 
-<img src="docs/img/qr_repositorio.png" alt="Código QR del repositorio" width="140">
+| Repositorio | Aplicación |
+|---|---|
+| <img src="docs/img/qr_repositorio.png" alt="Código QR del repositorio" width="140"> | <img src="docs/img/qr_app.png" alt="Código QR de la aplicación" width="140"> |
