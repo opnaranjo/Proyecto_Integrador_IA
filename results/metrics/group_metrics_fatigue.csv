@@ -1,3 +1,0 @@
-grupo,rmse,mae,r2,n,tasa_alerta_real,tasa_alerta_predicha,sensibilidad,falsos_positivos
-Fatiga imputada,0.0985,0.0795,0.765,411,0.2433,0.2822,0.79,0.119
-Fatiga observada,0.0522,0.0427,0.9304,3915,0.2378,0.2628,0.8722,0.0727
