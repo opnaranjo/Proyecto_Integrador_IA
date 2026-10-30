@@ -264,8 +264,8 @@ A la docente Gladys María Villegas Rugel por la retroalimentación que orientó
 
 ## 13. Videos
 
-* **Video pitch (5 minutos):** URL_VIDEO_PITCH
-* **Video de respuestas a las preguntas:** URL_VIDEO_PREGUNTAS
+* **Video pitch (5 minutos):** https://drive.google.com/file/d/1eZBrrrTUe1CbHx6if7TGZsOQuwHnYBYE/view?usp=drive_link
+* **Video de respuestas a las preguntas:** https://drive.google.com/file/d/10DCxdBFtiCTe45n0poLv4ItSO4ig1vuf/view?usp=drive_link
 
 | Repositorio | Aplicación |
 |---|---|
